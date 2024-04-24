@@ -1,0 +1,19 @@
+{
+    "name": "crepequer/php-brasil-utils",
+    "description": "A PHP package for Brazilian data utilities",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Crepequer\\PhpBrasilUtils\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Thiago Crepequer",
+            "email": "thiago.crepequer@hotmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {}
+}
