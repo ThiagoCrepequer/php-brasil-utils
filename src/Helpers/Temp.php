@@ -1,6 +1,6 @@
 <?php
 
-namespace Crepequer\PhpBrasilUtils\Traits;
+namespace Crepequer\PhpBrasilUtils\Helpers;
 
 use DateTime;
 use Exception;
@@ -14,13 +14,13 @@ final class Temp
      * @param string $filename - The name of the file that will be saved
      * @param string $folder - The folder where the file will be saved
      * 
-     * @example saveTempJson("{}", "file", "folder");
+     * @example set("{}", "file", "folder");
      * 
      * @return bool
      *
      * @author Thiago Crepequer
      */
-    public static function saveTempJson(string $data, string $filename, string $folder): bool
+    public static function set(string $data, string $filename, string $folder): bool
     {
         $tempPath = sys_get_temp_dir();
 
@@ -35,19 +35,19 @@ final class Temp
     }
 
     /**
-     * This method is responsible for getting the jsons from a temporary file
+     * This method is responsible for getting the jsons from a temporary file, if it is not found or if it is expired, it will return false
      * 
      * @param string $filename - The name of the file that will be saved
      * @param string $folder - The folder where the file will be saved
-     * @param DateTime $validity - The validity of the file, if it is not set, it will be 30 days
+     * @param DateTime $validity - The validity of the file, if it is not set, it will be never expired
      * 
-     * @example getTempJson("file", "folder");
+     * @example get("file", "folder");
      * 
-     * @return mixed
+     * @return array|bool
      *
      * @author Thiago Crepequer
      */
-    public static function getTempJson(string $filename, string $folder, DateTime $validity = new DateTime('+30 days')): array|bool
+    public static function get(string $filename, string $folder, DateTime $validity = null): array|bool
     {
         $tempPath = sys_get_temp_dir();
         $filePath = $tempPath . "/$folder" . "/$filename.json";
@@ -56,9 +56,11 @@ final class Temp
             return false;
         }
 
-        $currentTime = new DateTime();
-        if ($currentTime > $validity) {
-            return false;
+        if ($validity) {
+            $currentTime = new DateTime();
+            if ($currentTime > $validity) {
+                return false;
+            }
         }
 
         $data = file_get_contents($filePath);
