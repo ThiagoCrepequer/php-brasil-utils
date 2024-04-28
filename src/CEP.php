@@ -2,8 +2,6 @@
 
 namespace Crepequer\PhpBrasilUtils;
 
-use Crepequer\PhpBrasilUtils\Traits\Temp;
-use Exception;
 use InvalidArgumentException;
 
 final class CEP {
@@ -32,53 +30,76 @@ final class CEP {
     }
 
     /**
-     * This method is responsible for getting the address from the CEP using the ViaCEP API
+     * This method is responsible for add a mask to CEP
      * 
      * @param string $cep
-     * @param bool $error - If true, it will throw an exception if the CEP is invalid
-     * @param bool $saveTemp - If true, it will save the address in a temporary file
      * 
-     * @example getAddresses("12345-678");
-     * @example getAddresses("98765432");
+     * @example addMask("12345678");
      * 
-     * @return array|bool
+     * @return string
      * 
      * @author Thiago Crepequer
      */
-    public static function getAddresses(string $cep, bool|null $error = false, bool $saveTemp = false): array|bool
+    public static function addMask(string $cep): string
     {
-        if (!self::validateFormatting($cep, $error)) {
-            return false;
+        return substr($cep, 0, 5) . "-" . substr($cep, 5, 3);
+    }
+
+    /**
+     * This method is responsible for remove the mask from CEP
+     * 
+     * @param string $cep
+     * 
+     * @example removeMask("12345-678");
+     * 
+     * @return string
+     * 
+     * @author Thiago Crepequer
+     */
+    public static function removeMask(string $cep): string
+    {
+        return preg_replace("/[^0-9]/", "", $cep);
+    }
+
+    /**
+     * This method is responsible for remove the mask from CEP, and convert it to int
+     * (Note: it will remove 0 from the left of the number, if it exists, please use it carefully)
+     * 
+     * @param string|int $cep
+     * 
+     * @example removeMask("12345-678");
+     * 
+     * @return int
+     * 
+     * @author Thiago Crepequer
+     */
+    public static function toInt(string|int $cep): int
+    {
+        return (int) preg_replace("/[^0-9]/", "", $cep);
+    }
+
+    /**
+     * This method generate a CEP with random numbers (it's not necessarily a real CEP)
+     * 
+     * @param bool $mask - If true, it will return the CEP with the mask (xxxxx-xxx)
+     *
+     * @return string
+     * 
+     * @example generate();
+     * 
+     * @author Thiago Crepequer
+     */
+    public static function generate(bool $mask): string
+    {
+        $cep = "";
+        for ($i = 0; $i < 8; $i++) {
+            $cep .= rand(0, 9);
         }
 
-        if ($saveTemp) {
-            $temp = Temp::getTempJson($cep, "ceps");
-            if ($temp) {
-                return $temp;
-            }
+        if ($mask) {
+            return self::addMask($cep);
         }
 
-        $filtredCep = preg_replace("/[^0-9]/", "", $cep);
-        $url = "https://viacep.com.br/ws/{$filtredCep}/json/";
-
-        $curl = curl_init($url);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-        $response = curl_exec($curl);
-        curl_close($curl);
-
-        $json = json_decode($response, true);
-
-        if (empty($json) || (isset($json["erro"]) && $json["erro"] === true)) {
-            if ($error) {
-                throw new Exception("No address found for the CEP: {$cep}");
-            }
-            return false;
-        }
-
-        if ($saveTemp) {
-            Temp::saveTempJson($response, $cep, "ceps");
-        }
-
-        return $json;
+        return $cep;
     }
 }
