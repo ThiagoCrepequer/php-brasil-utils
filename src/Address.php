@@ -40,7 +40,7 @@ final class Address
             }
         }
 
-        $filtredCep = CEP::toInt($cep);
+        $filtredCep = CEP::removeMask($cep);
         $url = "https://viacep.com.br/ws/{$filtredCep}/json/";
 
         $curl = curl_init($url);

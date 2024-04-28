@@ -48,6 +48,23 @@ final class CEP {
     /**
      * This method is responsible for remove the mask from CEP
      * 
+     * @param string $cep
+     * 
+     * @example removeMask("12345-678");
+     * 
+     * @return string
+     * 
+     * @author Thiago Crepequer
+     */
+    public static function removeMask(string $cep): string
+    {
+        return preg_replace("/[^0-9]/", "", $cep);
+    }
+
+    /**
+     * This method is responsible for remove the mask from CEP, and convert it to int
+     * (Note: it will remove 0 from the left of the number, if it exists, please use it carefully)
+     * 
      * @param string|int $cep
      * 
      * @example removeMask("12345-678");
