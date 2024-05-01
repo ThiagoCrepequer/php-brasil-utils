@@ -1,0 +1,7 @@
+{
+	"name": "PHP",
+	"image": "mcr.microsoft.com/devcontainers/php:8.3",
+	"forwardPorts": [
+		9000
+	]
+}
