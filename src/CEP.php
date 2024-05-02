@@ -2,12 +2,9 @@
 
 namespace Crepequer\PhpBrasilUtils;
 
-use Crepequer\PhpBrasilUtils\Config\Config;
 use InvalidArgumentException;
 
-final class CEP
-{
-    use Config;
+final class CEP {
     /**
      * This method is responsible for validating the CEP
      * 
@@ -23,7 +20,6 @@ final class CEP
      */
     public static function validateFormatting(string $cep, bool $error = false): bool
     {
-        self::getConfig();
         if (!preg_match("/^(\d{5})-?(\d{3})$/", $cep)) {
             if ($error) {
                 throw new InvalidArgumentException("Invalid CEP format. Please use the following formats: xxxxx-xxx or xxxxxxxx");
@@ -71,7 +67,7 @@ final class CEP
      * 
      * @param string|int $cep
      * 
-     * @example toInt("12345-678");
+     * @example removeMask("12345-678");
      * 
      * @return int
      * 
