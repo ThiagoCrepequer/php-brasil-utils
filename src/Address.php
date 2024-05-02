@@ -17,7 +17,7 @@ final class Address
      * This method is responsible for getting the address from the CEP using the ViaCEP API
      * 
      * @param string $cep
-     * @param bool $error - If true, it will throw an exception if the CEP is invalid
+     * @param bool $throwError - If true, it will throw an exception if the CEP is invalid
      * @param bool $saveTemp - If true, it will save the address in a temporary file
      * 
      * @example getAddresses("12345-678");
@@ -27,9 +27,9 @@ final class Address
      * 
      * @author Thiago Crepequer
      */
-    public function searchByCep(string $cep, bool|null $error = false): array|bool
+    public function searchByCep(string $cep, bool|null $throwError = false): array|bool
     {
-        if (!CEP::validateFormatting($cep, $error)) {
+        if (!CEP::validateFormatting($cep, $throwError)) {
             return false;
         }
 
@@ -51,7 +51,7 @@ final class Address
         $json = json_decode($response, true);
 
         if (empty($json) || (isset($json["erro"]) && $json["erro"] === true)) {
-            if ($error) {
+            if ($throwError) {
                 throw new Exception("No address found for the CEP: {$cep}");
             }
             return false;
