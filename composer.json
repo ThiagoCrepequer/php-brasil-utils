@@ -23,6 +23,9 @@
     "scripts": {
         "test": [
             "vendor/bin/phpunit tests"
+        ],
+        "post-package-install": [
+            "php src/Config/init.php"
         ]
     }
 }

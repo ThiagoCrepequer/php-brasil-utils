@@ -3,7 +3,6 @@
 namespace Crepequer\PhpBrasilUtils\Helpers;
 
 use DateTime;
-use Exception;
 
 final class Temp
 {
