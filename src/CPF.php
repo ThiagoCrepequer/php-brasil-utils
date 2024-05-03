@@ -10,7 +10,7 @@ final class CPF
      * This method is responsible for validating the CPF
      * 
      * @param string $cpf
-     * @param bool|null $error - If true, it will throw an exception if the CPF is invalid
+     * @param bool|null $throwError - If true, it will throw an exception if the CPF is invalid
      * 
      * @example validate("123.456.789-09");
      * @example validte("98765432100");
@@ -19,26 +19,22 @@ final class CPF
      * 
      * @author Thiago Crepequer
      */
-    public static function validate(string $cpf, bool $error = false): bool
+    public static function validate(string $cpf, bool $throwError = false): bool
     {
-        if (!self::validateFormatting($cpf, $error)) {
+        if (!self::validateFormatting($cpf, $throwError)) {
             return false;
         }
 
-        if (!self::validateLength($cpf, $error)
-            || !self::validateNotSameDigits($cpf, $error)
-            || !self::validateVerificationDigits($cpf, $error)
-        ) {
-            return false;
-        }
-        return true;
+        return self::validateLength($cpf, $throwError)
+            && self::validateNotSameDigits($cpf, $throwError)
+            && self::validateVerificationDigits($cpf, $throwError);
     }
 
     /**
      * This method is responsible for validating the CPF formatting
      * 
      * @param string $cpf
-     * @param bool|null $error - If true, it will throw an exception if the CPF is invalid
+     * @param bool|null $throwError - If true, it will throw an exception if the CPF is invalid
      * 
      * @example validate("123.456.789-09");
      * @example validte("98765432100");
@@ -47,10 +43,10 @@ final class CPF
      * 
      * @author Thiago Crepequer
      */
-    public static function validateFormatting(string $cpf, bool $error = false): bool
+    public static function validateFormatting(string $cpf, bool $throwError = false): bool
     {
         if (!preg_match("/^(\d{3})\.?(\d{3})\.?(\d{3})-?(\d{2})$/", $cpf)) {
-            if ($error) {
+            if ($throwError) {
                 throw new InvalidArgumentException("Invalid CPF format. Please use the following formats: xxx.xxx.xxx-xx or xxxxxxxxxxx");
             }
             return false;
@@ -62,7 +58,7 @@ final class CPF
      * This method is responsible for validating the CPF length
      * 
      * @param string $cpf
-     * @param bool|null $error - If true, it will throw an exception if the CPF is invalid
+     * @param bool|null $throwError - If true, it will throw an exception if the CPF is invalid
      * 
      * @example validateLength("123.456.789-00");
      * 
@@ -70,11 +66,11 @@ final class CPF
      * 
      * @author Thiago Crepequer
      */
-    public static function validateLength(string $cpf, bool $error = false): bool
+    public static function validateLength(string $cpf, bool $throwError = false): bool
     {
         $cpf = preg_replace("/[^0-9]/", "", $cpf);
         if (strlen($cpf) != 11) {
-            if ($error) {
+            if ($throwError) {
                 throw new InvalidArgumentException("Invalid CPF length. Please use only 11 digits");
             }
             return false;
@@ -86,7 +82,7 @@ final class CPF
      * This method is responsible for validating the CPF with the same digits
      * 
      * @param string $cpf
-     * @param bool|null $error - If true, it will throw an exception if the CPF is invalid
+     * @param bool|null $throwError - If true, it will throw an exception if the CPF is invalid
      * 
      * @example validateSameDigits("111.111.111-11");
      * 
@@ -94,7 +90,7 @@ final class CPF
      * 
      * @author Thiago Crepequer
      */
-    public static function validateNotSameDigits(string $cpf, bool $error = false): bool
+    public static function validateNotSameDigits(string $cpf, bool $throwError = false): bool
     {
         $cpfNumber = preg_replace("/\D+/", "", $cpf);
         $cpfArray = str_split($cpfNumber);
@@ -104,7 +100,7 @@ final class CPF
             return true;
         } 
 
-        if ($error) {
+        if ($throwError) {
             throw new InvalidArgumentException("Invalid CPF. All digits are the same");
         }
         return false;
@@ -114,7 +110,7 @@ final class CPF
      * This method is responsible for validating the CPF verification digits
      * 
      * @param string $cpf
-     * @param bool|null $error - If true, it will throw an exception if the CPF is invalid
+     * @param bool|null $throwError - If true, it will throw an exception if the CPF is invalid
      * 
      * @example validateVerificationDigits("123.456.789-09");
      * 
@@ -122,7 +118,7 @@ final class CPF
      * 
      * @author Thiago Crepequer
      */
-    public static function validateVerificationDigits(string $cpf, bool $error = false): bool
+    public static function validateVerificationDigits(string $cpf, bool $throwError = false): bool
     {
         $cpf = preg_replace("/[^0-9]/", "", $cpf);
         $firstNineDigits = substr($cpf, 0, 9);
@@ -137,7 +133,7 @@ final class CPF
         $calculatedFirstVerificationDigit = ($remainder < 2) ? 0 : (11 - $remainder);
 
         if ($firstVerificationDigit != $calculatedFirstVerificationDigit) {
-            if ($error) {
+            if ($throwError) {
                 throw new InvalidArgumentException("Invalid CPF. The first verification digit is incorrect");
             }
             return false;
@@ -151,7 +147,7 @@ final class CPF
         $calculatedSecondVerificationDigit = ($remainder < 2) ? 0 : (11 - $remainder);
 
         if ($secondVerificationDigit != $calculatedSecondVerificationDigit) {
-            if ($error) {
+            if ($throwError) {
                 throw new InvalidArgumentException("Invalid CPF. The second verification digit is incorrect");
             }
             return false;

@@ -9,7 +9,7 @@ final class CEP {
      * This method is responsible for validating the CEP
      * 
      * @param string $cep
-     * @param bool|null $error - If true, it will throw an exception if the CEP is invalid
+     * @param bool|null $throwError - If true, it will throw an exception if the CEP is invalid
      * 
      * @example validate("12345-678");
      * @example validte("98765432");
@@ -18,10 +18,10 @@ final class CEP {
      * 
      * @author Thiago Crepequer
      */
-    public static function validateFormatting(string $cep, bool $error = false): bool
+    public static function validateFormatting(string $cep, bool $throwError = false): bool
     {
         if (!preg_match("/^(\d{5})-?(\d{3})$/", $cep)) {
-            if ($error) {
+            if ($throwError) {
                 throw new InvalidArgumentException("Invalid CEP format. Please use the following formats: xxxxx-xxx or xxxxxxxx");
             }
             return false;
